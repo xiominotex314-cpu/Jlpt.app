@@ -1,0 +1,1877 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JLPT N4 Vocabulary Trainer</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --white: #ffffff;
+            --gray: #6c757d;
+            --text-light: #f8f9fa;
+            --text-dark: #212529;
+            --border-radius: 10px;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        .dark-theme {
+            --primary: #4895ef;
+            --secondary: #4361ee;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --light: #2d3250;
+            --dark: #1d1e2c;
+            --white: #1d1e2c;
+            --gray: #adb5bd;
+            --text-light: #f8f9fa;
+            --text-dark: #f8f9fa;
+            --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            transition: var(--transition);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background: var(--white);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        /* Welcome Screen */
+        .screen {
+            padding: 40px;
+            text-align: center;
+            display: none;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        .welcome-screen h1 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 2.5rem;
+        }
+
+        .welcome-screen p {
+            color: var(--gray);
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+
+        .theme-selector {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .theme-btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .theme-btn.light {
+            background: #f8f9fa;
+            color: #212529;
+        }
+
+        .theme-btn.dark {
+            background: #212529;
+            color: #f8f9fa;
+        }
+
+        .theme-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: var(--text-light);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: var(--text-light);
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--box-shadow);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Category Screen */
+        .category-screen h2 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .category-card {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .category-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: var(--box-shadow);
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .category-name {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .category-count {
+            background: var(--primary);
+            color: var(--text-light);
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 24px;
+            background: var(--gray);
+            color: var(--text-light);
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-top: 20px;
+        }
+
+        .back-btn:hover {
+            background: var(--dark);
+            transform: translateX(-5px);
+        }
+
+        /* Quiz Screen */
+        .quiz-screen h2 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 10px;
+            background: var(--light);
+            border-radius: 5px;
+            margin: 0 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--success);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--primary);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .flashcard {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            text-align: center;
+            margin-bottom: 30px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            box-shadow: var(--box-shadow);
+        }
+
+        .question {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 20px;
+        }
+
+        .answer {
+            font-size: 1.5rem;
+            color: var(--gray);
+            margin-top: 20px;
+            min-height: 40px;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .option-btn {
+            padding: 15px;
+            background: var(--white);
+            border: 2px solid var(--light);
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 1.1rem;
+            color: var(--text-dark);
+        }
+
+        .option-btn:hover {
+            border-color: var(--primary);
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .option-btn.correct {
+            background: rgba(76, 201, 240, 0.2);
+            border-color: var(--success);
+        }
+
+        .option-btn.incorrect {
+            background: rgba(247, 37, 133, 0.2);
+            border-color: var(--danger);
+        }
+
+        .quiz-controls {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        /* Summary Screen */
+        .summary-screen h2 {
+            color: var(--primary);
+            margin-bottom: 30px;
+            font-size: 2rem;
+        }
+
+        .summary-stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 40px;
+        }
+
+        .summary-stat {
+            text-align: center;
+        }
+
+        .summary-number {
+            font-size: 3rem;
+            font-weight: bold;
+        }
+
+        .summary-number.correct {
+            color: var(--success);
+        }
+
+        .summary-number.incorrect {
+            color: var(--danger);
+        }
+
+        .summary-number.percentage {
+            color: var(--warning);
+        }
+
+        .summary-label {
+            font-size: 1.2rem;
+            color: var(--gray);
+        }
+
+        /* Custom Setup */
+        .custom-setup {
+            background: var(--light);
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .custom-setup h3 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        .category-selection {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .category-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .category-checkbox label {
+            color: var(--text-dark);
+        }
+
+        .question-count {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .question-count label {
+            color: var(--text-dark);
+        }
+
+        .question-count input {
+            padding: 8px;
+            border: 1px solid var(--gray);
+            border-radius: 5px;
+            width: 80px;
+            color: var(--text-dark);
+            background: var(--white);
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .categories {
+                grid-template-columns: 1fr;
+            }
+            
+            .screen {
+                padding: 20px;
+            }
+            
+            .welcome-screen h1 {
+                font-size: 2rem;
+            }
+            
+            .category-selection {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen welcome-screen active">
+            <h1><i class="fas fa-graduation-cap"></i> JLPT N4 Vocabulary Trainer</h1>
+            <p>Tingkatkan kemampuan bahasa Jepangmu dengan kartu flash interaktif</p>
+            
+            <div class="theme-selector">
+                <button class="theme-btn light" onclick="setTheme('light')">
+                    <i class="fas fa-sun"></i> Terang
+                </button>
+                <button class="theme-btn dark" onclick="setTheme('dark')">
+                    <i class="fas fa-moon"></i> Gelap
+                </button>
+            </div>
+            
+            <button class="btn btn-primary" onclick="showScreen('categoryScreen')">
+                <i class="fas fa-play"></i> Mulai Belajar
+            </button>
+            <button class="btn btn-danger" onclick="exitApp()">
+                <i class="fas fa-times"></i> Keluar
+            </button>
+        </div>
+
+        <!-- Category Screen -->
+        <div id="categoryScreen" class="screen category-screen">
+            <h2>Pilih Kategori</h2>
+            
+            <div class="categories">
+                <div class="category-card" onclick="setupQuiz('noun')">
+                    <i class="category-icon fas fa-book"></i>
+                    <div class="category-name">Kata Benda</div>
+                    <div class="category-count">567 kata</div>
+                </div>
+                
+                <div class="category-card" onclick="setupQuiz('adjective-i')">
+                    <i class="category-icon fas fa-palette"></i>
+                    <div class="category-name">Kata Sifat-I</div>
+                    <div class="category-count">68 kata</div>
+                </div>
+                
+                <div class="category-card" onclick="setupQuiz('adjective-na')">
+                    <i class="category-icon fas fa-star"></i>
+                    <div class="category-name">Kata Sifat-na</div>
+                    <div class="category-count">38 kata</div>
+                </div>
+                
+                <div class="category-card" onclick="setupQuiz('verb')">
+                    <i class="category-icon fas fa-running"></i>
+                    <div class="category-name">Kata Kerja</div>
+                    <div class="category-count">208 kata</div>
+                </div>
+                
+                <div class="category-card" onclick="setupQuiz('mixed')">
+                    <i class="category-icon fas fa-random"></i>
+                    <div class="category-name">Campuran</div>
+                    <div class="category-count">881 kata</div>
+                </div>
+                
+                <div class="category-card" onclick="setupCustomQuiz()">
+                    <i class="category-icon fas fa-cog"></i>
+                    <div class="category-name">Kustom</div>
+                    <div class="category-count">Sesuaikan</div>
+                </div>
+            </div>
+            
+            <button class="back-btn" onclick="showScreen('welcomeScreen')">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+        </div>
+
+        <!-- Custom Quiz Setup Screen -->
+        <div id="customSetupScreen" class="screen category-screen">
+            <h2>Kuis Kustom</h2>
+            <p>Pilih kategori dan jumlah soal:</p>
+            
+            <div class="custom-setup">
+                <h3>Pilih Kategori:</h3>
+                <div class="category-selection">
+                    <div class="category-checkbox">
+                        <input type="checkbox" id="customNoun" value="noun">
+                        <label for="customNoun">Kata Benda</label>
+                    </div>
+                    <div class="category-checkbox">
+                        <input type="checkbox" id="customAdjectiveI" value="adjective-i">
+                        <label for="customAdjectiveI">Kata Sifat-I</label>
+                    </div>
+                    <div class="category-checkbox">
+                        <input type="checkbox" id="customAdjectiveNa" value="adjective-na">
+                        <label for="customAdjectiveNa">Kata Sifat-na</label>
+                    </div>
+                    <div class="category-checkbox">
+                        <input type="checkbox" id="customVerb" value="verb">
+                        <label for="customVerb">Kata Kerja</label>
+                    </div>
+                </div>
+                
+                <div class="question-count">
+                    <label for="questionCount">Jumlah Soal:</label>
+                    <input type="number" id="questionCount" min="1" max="100" value="10">
+                    <button class="btn btn-primary" onclick="selectAllQuestions()">Semua</button>
+                </div>
+                
+                <button class="btn btn-primary" onclick="startCustomQuiz()">
+                    <i class="fas fa-play"></i> Mulai Kuis
+                </button>
+            </div>
+            
+            <button class="back-btn" onclick="showScreen('categoryScreen')">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+        </div>
+
+        <!-- Quiz Setup Screen -->
+        <div id="quizSetupScreen" class="screen category-screen">
+            <h2 id="setupCategoryTitle">Kuis</h2>
+            
+            <div class="custom-setup">
+                <div class="question-count">
+                    <label for="categoryQuestionCount">Jumlah Soal:</label>
+                    <input type="number" id="categoryQuestionCount" min="1" max="1000" value="10">
+                    <button class="btn btn-primary" onclick="selectAllCategoryQuestions()">Semua</button>
+                </div>
+                
+                <button class="btn btn-primary" id="startCategoryQuizBtn">
+                    <i class="fas fa-play"></i> Mulai Kuis
+                </button>
+            </div>
+            
+            <button class="back-btn" onclick="showScreen('categoryScreen')">
+                <i class="fas fa-arrow-left"></i> Kembali
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quizScreen" class="screen quiz-screen">
+            <h2>Kuis Vocabulary</h2>
+            
+            <div class="quiz-header">
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="currentQuestion">1</div>
+                        <div class="stat-label">Soal</div>
+                    </div>
+                </div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+                
+                <div class="stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="correctCount">0</div>
+                        <div class="stat-label">Benar</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="incorrectCount">0</div>
+                        <div class="stat-label">Salah</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flashcard">
+                <div class="question" id="question">Question</div>
+                <div class="answer" id="answer"></div>
+            </div>
+            
+            <div class="options" id="options">
+                <!-- Options will be generated here -->
+            </div>
+            
+            <div class="quiz-controls">
+                <button class="btn btn-danger" onclick="endQuiz()">
+                    <i class="fas fa-times"></i> Akhiri Sesi
+                </button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()" style="display:none;">
+                    <i class="fas fa-arrow-right"></i> Soal Berikutnya
+                </button>
+            </div>
+        </div>
+
+        <!-- Summary Screen -->
+        <div id="summaryScreen" class="screen summary-screen">
+            <h2>Ringkasan Kuis</h2>
+            
+            <div class="summary-stats">
+                <div class="summary-stat">
+                    <div class="summary-number correct" id="summaryCorrect">0</div>
+                    <div class="summary-label">Benar</div>
+                </div>
+                
+                <div class="summary-stat">
+                    <div class="summary-number incorrect" id="summaryIncorrect">0</div>
+                    <div class="summary-label">Salah</div>
+                </div>
+                
+                <div class="summary-stat">
+                    <div class="summary-number percentage" id="summaryPercentage">0%</div>
+                    <div class="summary-label">Akurasi</div>
+                </div>
+            </div>
+            
+            <button class="btn btn-primary" onclick="showScreen('categoryScreen')">
+                <i class="fas fa-redo"></i> Kuis Lagi
+            </button>
+            <button class="btn btn-danger" onclick="showScreen('welcomeScreen')">
+                <i class="fas fa-home"></i> Ke Menu Utama
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Vocabulary Data
+        const vocabulary = {
+            noun: [
+    { japanese: "挨拶", romaji: "aisatsu", meaning: "salam" },
+    { japanese: "間", romaji: "aida", meaning: "antara" },
+    { japanese: "赤ちゃん/赤ん坊", romaji: "akachan/akanbou", meaning: "bayi" },
+    { japanese: "秋", romaji: "aki", meaning: "musim gugur" },
+    { japanese: "味", romaji: "aji", meaning: "rasa" },
+    { japanese: "朝", romaji: "asa", meaning: "pagi" },
+    { japanese: "朝ご飯", romaji: "asagohan", meaning: "sarapan pagi" },
+    { japanese: "朝寝坊", romaji: "asanebou", meaning: "bangun kesiangan" },
+    { japanese: "明後日", romaji: "asatte", meaning: "besok lusa" },
+    { japanese: "足", romaji: "ashi", meaning: "kaki" },
+    { japanese: "明日", romaji: "ashita/asu", meaning: "besok" },
+    { japanese: "家内", romaji: "kanai", meaning: "istri" },
+    { japanese: "川", romaji: "kawa", meaning: "sungai" },
+    { japanese: "頭", romaji: "atama", meaning: "kepala" },
+    { japanese: "後", romaji: "ato", meaning: "nanti" },
+    { japanese: "あなた", romaji: "anata", meaning: "anda" },
+    { japanese: "いつ", romaji: "itsu", meaning: "kapan" },
+    { japanese: "兄/ お兄さん", romaji: "ani/onii-san", meaning: "kakak laki-laki" },
+    { japanese: "姉/ お姉さん", romaji: "ane/onee-san", meaning: "kakak perempuan" },
+    { japanese: "アパート", romaji: "apaato", meaning: "apartement" },
+    { japanese: "雨", romaji: "ame", meaning: "hujan" },
+    { japanese: "家", romaji: "ie/uchi", meaning: "rumah" },
+    { japanese: "池", romaji: "ike", meaning: "kolam" },
+    { japanese: "医者", romaji: "isha", meaning: "dokter" },
+    { japanese: "椅子", romaji: "isu", meaning: "bangku" },
+    { japanese: "一", romaji: "ichi", meaning: "satu" },
+    { japanese: "一日", romaji: "ichinichi/tsuitachi", meaning: "tanggal 1/satu hari" },
+    { japanese: "一番", romaji: "ichiban", meaning: "paling/nomer satu" },
+    { japanese: "一緒", romaji: "issho", meaning: "bersama" },
+    { japanese: "今", romaji: "ima", meaning: "sekarang" },
+    { japanese: "意味", romaji: "imi", meaning: "arti" },
+    { japanese: "いつ", romaji: "itsu", meaning: "kapan" },
+    { japanese: "いつか", romaji: "itsuka", meaning: "suatu saat" },
+    { japanese: "いつも", romaji: "itsumo", meaning: "selalu" },
+    { japanese: "あまり", romaji: "amari", meaning: "tidak begitu" },
+    { japanese: "妹", romaji: "imouto", meaning: "adik perempuan" },
+    { japanese: "入り口", romaji: "iriguchi", meaning: "pintu masuk" },
+    { japanese: "色", romaji: "iro", meaning: "warna" },
+    { japanese: "色々", romaji: "iroiro", meaning: "macam-macam" },
+    { japanese: "上", romaji: "ue", meaning: "atas" },
+    { japanese: "後ろ", romaji: "ushiro", meaning: "belakang" },
+    { japanese: "歌", romaji: "uta", meaning: "lagu" },
+    { japanese: "海", romaji: "umi", meaning: "laut" },
+    { japanese: "上着", romaji: "uwagi", meaning: "jaket" },
+    { japanese: "絵", romaji: "e", meaning: "gambar/lukisan" },
+    { japanese: "映画", romaji: "eiga", meaning: "film" },
+    { japanese: "映画館", romaji: "eigakan", meaning: "bioskop" },
+    { japanese: "英語", romaji: "eigo", meaning: "bahasa inggris" },
+    { japanese: "駅", romaji: "eki", meaning: "stasiun" },
+    { japanese: "エレベーター", romaji: "erebeetaa", meaning: "elevator" },
+    { japanese: "円", romaji: "en", meaning: "yen" },
+    { japanese: "鉛筆", romaji: "enpitsu", meaning: "pensil" },
+    { japanese: "側", romaji: "gawa", meaning: "sebelah" },
+    { japanese: "母/ お母さん", romaji: "haha/okaa-san", meaning: "ibu" },
+    { japanese: "お菓子", romaji: "okashi", meaning: "permen/snack" },
+    { japanese: "お金", romaji: "okane", meaning: "uang" },
+    { japanese: "妻/奥さん", romaji: "tsuma/oku-san", meaning: "istri" },
+    { japanese: "お酒", romaji: "osake", meaning: "arak" },
+    { japanese: "お皿", romaji: "osara", meaning: "piring" },
+    { japanese: "伯父さん", romaji: "ojiisan", meaning: "paman" },
+    { japanese: "お祖父さん", romaji: "ojiisan", meaning: "kakek" },
+    { japanese: "伯母さん", romaji: "obasan", meaning: "bibi/tante" },
+    { japanese: "お祖母さん", romaji: "obaasan", meaning: "nenek" },
+    { japanese: "お茶", romaji: "ocha", meaning: "the" },
+    { japanese: "お手洗い/ トイレ", romaji: "otearai/toire", meaning: "toilet" },
+    { japanese: "弟", romaji: "otouto", meaning: "adik laki-laki" },
+    { japanese: "男", romaji: "otoko", meaning: "laki-laki" },
+    { japanese: "一昨年", romaji: "ototoshi", meaning: "dua tahun yang lalu" },
+    { japanese: "大人", romaji: "otona", meaning: "dewasa" },
+    { japanese: "お腹", romaji: "onaka", meaning: "perut" },
+    { japanese: "同じ", romaji: "onaji", meaning: "sama" },
+    { japanese: "お弁当", romaji: "obentou", meaning: "kotak makan siang" },
+    { japanese: "音楽", romaji: "ongaku", meaning: "musik" },
+    { japanese: "女", romaji: "onna", meaning: "perempuan" },
+    { japanese: "外国", romaji: "gaikoku", meaning: "negara luar" },
+    { japanese: "外国人", romaji: "gaikokujin", meaning: "orang asing" },
+    { japanese: "会社", romaji: "kaisha", meaning: "perusahaan" },
+    { japanese: "階段", romaji: "kaidan", meaning: "tangga" },
+    { japanese: "顔", romaji: "kao", meaning: "wajah" },
+    { japanese: "買い物", romaji: "kaimono", meaning: "belanja" },
+    { japanese: "鍵", romaji: "kagi", meaning: "kunci" },
+    { japanese: "学生", romaji: "gakusei", meaning: "pelajar" },
+    { japanese: "傘", romaji: "kasa", meaning: "payung" },
+    { japanese: "風", romaji: "kaze", meaning: "angin" },
+    { japanese: "風邪", romaji: "kaze", meaning: "flu/masuk angin" },
+    { japanese: "家族", romaji: "kazoku", meaning: "keluarga" },
+    { japanese: "子", romaji: "ko", meaning: "anak" },
+    { japanese: "郊外", romaji: "kougai", meaning: "pinggiran kota" },
+    { japanese: "講義", romaji: "kougi", meaning: "kuliah" },
+    { japanese: "工業", romaji: "kougyou", meaning: "industri" },
+    { japanese: "高校", romaji: "koukou", meaning: "SMA" },
+    { japanese: "高校生", romaji: "koukousei", meaning: "murid SMA" },
+    { japanese: "工場", romaji: "koujou", meaning: "pabrik" },
+    { japanese: "校長", romaji: "kouchou", meaning: "kepala sekolah" },
+    { japanese: "交通", romaji: "koutsuu", meaning: "lalu lintas" },
+    { japanese: "行動", romaji: "koudou", meaning: "tindakan" },
+    { japanese: "国際", romaji: "kokusai", meaning: "internasional" },
+    { japanese: "心", romaji: "kokoro", meaning: "hati" },
+    { japanese: "米", romaji: "kome", meaning: "beras" },
+    { japanese: "コンサート", romaji: "konsaato", meaning: "konser" },
+    { japanese: "今夜", romaji: "kon'ya", meaning: "malam ini" },
+    { japanese: "コンピューター", romaji: "konpyuutaa", meaning: "komputer" },
+    { japanese: "ご主人", romaji: "goshujin", meaning: "suami" },
+    { japanese: "ゴミ", romaji: "gomi", meaning: "sampah" },
+    { japanese: "答え", romaji: "kotae", meaning: "jawaban" },
+    { japanese: "小鳥", romaji: "kotori", meaning: "anak burung" },
+    { japanese: "事", romaji: "koto", meaning: "\"hal, sesuatu\"" },
+    { japanese: "公務員", romaji: "koumuin", meaning: "PNS" },
+    { japanese: "かたかな", romaji: "katakana", meaning: "katakana" },
+    { japanese: "ひらがな", romaji: "hiragana", meaning: "hiragana" },
+    { japanese: "一月", romaji: "ichigatsu", meaning: "januari" },
+    { japanese: "二月", romaji: "nigatsu", meaning: "febuari" },
+    { japanese: "三月", romaji: "sangatsu", meaning: "maret" },
+    { japanese: "四月", romaji: "shigatsu", meaning: "april" },
+    { japanese: "五月", romaji: "gogatsu", meaning: "mai" },
+    { japanese: "六月", romaji: "rokugatsu", meaning: "juni" },
+    { japanese: "七月", romaji: "shichigatsu", meaning: "juli" },
+    { japanese: "八月", romaji: "hachigatsu", meaning: "agustus" },
+    { japanese: "九月", romaji: "kugatsu", meaning: "september" },
+    { japanese: "十月", romaji: "juugatsu", meaning: "oktober" },
+    { japanese: "十一月", romaji: "juuichigatsu", meaning: "november" },
+    { japanese: "十二月", romaji: "juunigatsu", meaning: "desember" },
+    { japanese: "学校", romaji: "gakkou", meaning: "sekolahan" },
+    { japanese: "角", romaji: "kado", meaning: "sudut" },
+    { japanese: "鞄", romaji: "kaban", meaning: "tas" },
+    { japanese: "花瓶", romaji: "kabin", meaning: "pot bunga" },
+    { japanese: "紙", romaji: "kami", meaning: "kertas" },
+    { japanese: "カメラ", romaji: "kamera", meaning: "kamera" },
+    { japanese: "火曜日", romaji: "kayoubi", meaning: "hari selasa" },
+    { japanese: "体", romaji: "karada", meaning: "tubuh" },
+    { japanese: "カレンダー", romaji: "karendaa", meaning: "kalender" },
+    { japanese: "漢字", romaji: "kanji", meaning: "kanji" },
+    { japanese: "木", romaji: "ki", meaning: "pohon" },
+    { japanese: "気", romaji: "ki", meaning: "\"mood, semangat\"" },
+    { japanese: "気分", romaji: "kibun", meaning: "mood" },
+    { japanese: "君", romaji: "kimi", meaning: "kamu" },
+    { japanese: "ギター", romaji: "gitaa", meaning: "gitar" },
+    { japanese: "喫茶店", romaji: "kissaten", meaning: "kedai kopi" },
+    { japanese: "切手", romaji: "kitte", meaning: "perangko" },
+    { japanese: "切符", romaji: "kippu", meaning: "tiket" },
+    { japanese: "昨日", romaji: "kinou", meaning: "kemarin" },
+    { japanese: "九", romaji: "kyuu", meaning: "sembilan" },
+    { japanese: "急行", romaji: "kyuukou", meaning: "express" },
+    { japanese: "牛肉", romaji: "gyuuniku", meaning: "daging sapi" },
+    { japanese: "牛乳", romaji: "gyuunyuu", meaning: "susu sapi" },
+    { japanese: "客", romaji: "kyaku", meaning: "\"tamu, pelanggan\"" },
+    { japanese: "今日", romaji: "kyou", meaning: "hari ini" },
+    { japanese: "教育", romaji: "kyouiku", meaning: "pendidikan" },
+    { japanese: "教会", romaji: "kyoukai", meaning: "gereja" },
+    { japanese: "競争", romaji: "kyousou", meaning: "kompetisi" },
+    { japanese: "教室", romaji: "kyoushitsu", meaning: "kelas" },
+    { japanese: "兄弟", romaji: "kyoudai", meaning: "saudara" },
+    { japanese: "興味", romaji: "kyoumi", meaning: "ketertarikan" },
+    { japanese: "去年", romaji: "kyonen", meaning: "tahun lalu" },
+    { japanese: "キロ", romaji: "kiro", meaning: "kilo" },
+    { japanese: "機会", romaji: "kikai", meaning: "kesempatan" },
+    { japanese: "危険", romaji: "kiken", meaning: "bahaya" },
+    { japanese: "着物", romaji: "kimono", meaning: "baju kimono" },
+    { japanese: "気持ち", romaji: "kimochi", meaning: "perasaan" },
+    { japanese: "近所", romaji: "kinjo", meaning: "lingkungan" },
+    { japanese: "汽車", romaji: "kisha", meaning: "kereta uap" },
+    { japanese: "メートル", romaji: "meetoru", meaning: "meter" },
+    { japanese: "技術", romaji: "gijutsu", meaning: "teknologi" },
+    { japanese: "季節", romaji: "kisetsu", meaning: "musim" },
+    { japanese: "規則", romaji: "kisoku", meaning: "regulasi" },
+    { japanese: "絹", romaji: "kinu", meaning: "sutera" },
+    { japanese: "銀行", romaji: "ginkou", meaning: "bank" },
+    { japanese: "金曜日", romaji: "kinyoubi", meaning: "hari jumat" },
+    { japanese: "薬", romaji: "kusuri", meaning: "obat" },
+    { japanese: "果物", romaji: "kudamono", meaning: "buah-buahan" },
+    { japanese: "首", romaji: "kubi", meaning: "leher" },
+    { japanese: "口", romaji: "kuchi", meaning: "mulut" },
+    { japanese: "靴", romaji: "kutsu", meaning: "sepatu" },
+    { japanese: "靴下", romaji: "kutsushita", meaning: "kaus kaki" },
+    { japanese: "雲", romaji: "kumo", meaning: "awan" },
+    { japanese: "曇り", romaji: "kumori", meaning: "mendung" },
+    { japanese: "国", romaji: "kuni", meaning: "negara" },
+    { japanese: "クラス", romaji: "kurasu", meaning: "class" },
+    { japanese: "草", romaji: "kusa", meaning: "rumput" },
+    { japanese: "空気", romaji: "kuuki", meaning: "\"udara, atmospir\"" },
+    { japanese: "空港", romaji: "kuukou", meaning: "bandara" },
+    { japanese: "具合", romaji: "guai", meaning: "kondisi" },
+    { japanese: "グラス", romaji: "gurasu", meaning: "glass" },
+    { japanese: "グラム", romaji: "guramu", meaning: "gram" },
+    { japanese: "車", romaji: "kuruma", meaning: "mobil" },
+    { japanese: "怪我", romaji: "kega", meaning: "\"luka, cedera\"" },
+    { japanese: "今朝", romaji: "kesa", meaning: "pagi ini" },
+    { japanese: "景色", romaji: "keshiki", meaning: "pemandangan" },
+    { japanese: "消しゴム", romaji: "keshigomu", meaning: "penghapus" },
+    { japanese: "結婚", romaji: "kekkon", meaning: "menikah" },
+    { japanese: "計画", romaji: "keikaku", meaning: "rencana" },
+    { japanese: "経験", romaji: "keiken", meaning: "pengalaman" },
+    { japanese: "警察", romaji: "keisatsu", meaning: "polisi" },
+    { japanese: "経済", romaji: "keizai", meaning: "ekonomi" },
+    { japanese: "ケーキ", romaji: "keeki", meaning: "kue" },
+    { japanese: "喧嘩", romaji: "kenka", meaning: "pertengkaran" },
+    { japanese: "研究", romaji: "kenkyuu", meaning: "penelitian" },
+    { japanese: "研究者", romaji: "kenkyuusha", meaning: "peneliti" },
+    { japanese: "研究室", romaji: "kenkyuushitsu", meaning: "ruang penelitian/laboratorium" },
+    { japanese: "見物", romaji: "kenbutsu", meaning: "tamasya" },
+    { japanese: "下宿", romaji: "geshuku", meaning: "pondok" },
+    { japanese: "月曜日", romaji: "getsuyoubi", meaning: "hari senin" },
+    { japanese: "原因", romaji: "gen'in", meaning: "\"sumber, penyebab\"" },
+    { japanese: "玄関", romaji: "genkan", meaning: "pintu gerbang" },
+    { japanese: "公園", romaji: "kouen", meaning: "taman" },
+    { japanese: "交番", romaji: "kouban", meaning: "pos polisi" },
+    { japanese: "声", romaji: "koe", meaning: "suara" },
+    { japanese: "午後", romaji: "gogo", meaning: "sore/PM" },
+    { japanese: "午前", romaji: "gozen", meaning: "pagi/AM" },
+    { japanese: "夫/ ご主人", romaji: "otto/goshujin", meaning: "suami" },
+    { japanese: "コップ", romaji: "koppu", meaning: "cangkir" },
+    { japanese: "今年", romaji: "kotoshi", meaning: "tahun ini" },
+    { japanese: "言葉", romaji: "kotoba", meaning: "kata-kata" },
+    { japanese: "子供", romaji: "kodomo", meaning: "anak-anak" },
+    { japanese: "ご飯", romaji: "gohan", meaning: "nasi" },
+    { japanese: "今月", romaji: "kongetsu", meaning: "tahun ini" },
+    { japanese: "今週", romaji: "konshuu", meaning: "minggu ini" },
+    { japanese: "こんな", romaji: "konna", meaning: "seperti ini" },
+    { japanese: "そんな", romaji: "sonna", meaning: "seperti itu" },
+    { japanese: "今晩", romaji: "konban", meaning: "malam ini" },
+    { japanese: "魚", romaji: "sakana", meaning: "ikan" },
+    { japanese: "先", romaji: "saki", meaning: "ujung/tadi" },
+    { japanese: "作文", romaji: "sakubun", meaning: "essai/karangan" },
+    { japanese: "雑誌", romaji: "zasshi", meaning: "majalah" },
+    { japanese: "砂糖", romaji: "satou", meaning: "gula" },
+    { japanese: "再来年", romaji: "sarainen", meaning: "dua tahun kedepan" },
+    { japanese: "三", romaji: "san", meaning: "tiga" },
+    { japanese: "散歩", romaji: "sanpo", meaning: "jalan-jalan" },
+    { japanese: "四", romaji: "shi/yon", meaning: "empat" },
+    { japanese: "塩", romaji: "shio", meaning: "garam" },
+    { japanese: "しかし", romaji: "shikashi", meaning: "tetapi" },
+    { japanese: "時間", romaji: "jikan", meaning: "waktu" },
+    { japanese: "仕事", romaji: "shigoto", meaning: "pekerjaan" },
+    { japanese: "辞書", romaji: "jisho", meaning: "kamus" },
+    { japanese: "下", romaji: "shita", meaning: "bawah" },
+    { japanese: "質問", romaji: "shitsumon", meaning: "pertanyaan" },
+    { japanese: "自転車", romaji: "jitensha", meaning: "sepeda" },
+    { japanese: "自分", romaji: "jibun", meaning: "diri" },
+    { japanese: "写真", romaji: "shashin", meaning: "foto/gambar" },
+    { japanese: "事務所", romaji: "jimusho", meaning: "kantor" },
+    { japanese: "社長", romaji: "shachou", meaning: "presiden perusahaan" },
+    { japanese: "邪魔", romaji: "jama", meaning: "gangguan" },
+    { japanese: "習慣", romaji: "shuukan", meaning: "kebiasaan" },
+    { japanese: "十分", romaji: "juubun", meaning: "cukup" },
+    { japanese: "出席", romaji: "shusseki", meaning: "kehadiran" },
+    { japanese: "出発", romaji: "shuppatsu", meaning: "keberangkatan" },
+    { japanese: "趣味", romaji: "shumi", meaning: "hobi" },
+    { japanese: "準備", romaji: "junbi", meaning: "persiapan" },
+    { japanese: "紹介", romaji: "shoukai", meaning: "memperkenalkan" },
+    { japanese: "小学校", romaji: "shougakkou", meaning: "SD" },
+    { japanese: "小学生", romaji: "shougakusei", meaning: "murid SD" },
+    { japanese: "小説", romaji: "shousetsu", meaning: "novel" },
+    { japanese: "招待", romaji: "shoutai", meaning: "undangan" },
+    { japanese: "食料品", romaji: "shokuryouhin", meaning: "alat makan" },
+    { japanese: "将来/未来", romaji: "shourai/mirai", meaning: "masa depan" },
+    { japanese: "食事", romaji: "shokuji", meaning: "makanan" },
+    { japanese: "住所", romaji: "juusho", meaning: "alamat" },
+    { japanese: "自由", romaji: "jiyuu", meaning: "kebebasan" },
+    { japanese: "人口", romaji: "jinkou", meaning: "populasi" },
+    { japanese: "神社", romaji: "jinja", meaning: "kuil" },
+    { japanese: "女性", romaji: "josei", meaning: "wanita" },
+    { japanese: "男性", romaji: "dansei", meaning: "pria" },
+    { japanese: "社会", romaji: "shakai", meaning: "masyarakat" },
+    { japanese: "シャツ", romaji: "shatsu", meaning: "baju" },
+    { japanese: "失敗", romaji: "shippai", meaning: "kegagalan" },
+    { japanese: "心配", romaji: "shinpai", meaning: "khawatir" },
+    { japanese: "新聞記者", romaji: "shinbunkisha", meaning: "wartawan koran" },
+    { japanese: "新聞社", romaji: "shinbunsha", meaning: "perusahaan koran/surat kabar" },
+    { japanese: "品物", romaji: "shinamono", meaning: "barang" },
+    { japanese: "島", romaji: "shima", meaning: "pulau" },
+    { japanese: "市民", romaji: "shimin", meaning: "warga" },
+    { japanese: "試合", romaji: "shiai", meaning: "pertandingan" },
+    { japanese: "仕方", romaji: "shikata", meaning: "\"cara, metode\"" },
+    { japanese: "試験", romaji: "shiken", meaning: "\"tes, ujian\"" },
+    { japanese: "下着", romaji: "shitagi", meaning: "\"bawahan, celana dalam\"" },
+    { japanese: "支度", romaji: "shitaku", meaning: "persiapan" },
+    { japanese: "最近", romaji: "saikin", meaning: "akhir-akhir ini" },
+    { japanese: "最後", romaji: "saigo", meaning: "paling akhir" },
+    { japanese: "最初", romaji: "saisho", meaning: "paling awal" },
+    { japanese: "坂", romaji: "saka", meaning: "bukit" },
+    { japanese: "さっき", romaji: "sakki", meaning: "tadi" },
+    { japanese: "再来週", romaji: "saraishuu", meaning: "minggu depannya" },
+    { japanese: "再来月", romaji: "saraigetsu", meaning: "bulan depannya" },
+    { japanese: "再来年", romaji: "sarainen", meaning: "tahun depannya" },
+    { japanese: "字", romaji: "ji", meaning: "huruf" },
+    { japanese: "事故", romaji: "jiko", meaning: "kecelakaan" },
+    { japanese: "時代", romaji: "jidai", meaning: "era" },
+    { japanese: "地震", romaji: "jishin", meaning: "gempa bumi" },
+    { japanese: "自信", romaji: "jishin", meaning: "kepercayaan diri" },
+    { japanese: "十", romaji: "juu", meaning: "sepuluh" },
+    { japanese: "授業", romaji: "juugyou", meaning: "pelajaran" },
+    { japanese: "宿題", romaji: "shukudai", meaning: "pekerjaan rumah" },
+    { japanese: "しょうゆ", romaji: "shouyu", meaning: "kecap" },
+    { japanese: "食堂", romaji: "shokudou", meaning: "kantin" },
+    { japanese: "新聞", romaji: "shinbun", meaning: "koran" },
+    { japanese: "水曜日", romaji: "suiyoubi", meaning: "hari rabu" },
+    { japanese: "数学", romaji: "suugaku", meaning: "matematika" },
+    { japanese: "砂", romaji: "suna", meaning: "pasir" },
+    { japanese: "すり", romaji: "suri", meaning: "pencopet" },
+    { japanese: "隅", romaji: "sumi", meaning: "sudut" },
+    { japanese: "スクリーン", romaji: "sukuriin", meaning: "layar" },
+    { japanese: "スーツ", romaji: "suutsu", meaning: "baju" },
+    { japanese: "水泳", romaji: "suiei", meaning: "berenang" },
+    { japanese: "スカート", romaji: "sukaato", meaning: "rok" },
+    { japanese: "ストーブ", romaji: "sutoobu", meaning: "penghangat ruangan" },
+    { japanese: "スプーン", romaji: "supuun", meaning: "sendok" },
+    { japanese: "スポーツ", romaji: "supootsu", meaning: "olah raga" },
+    { japanese: "生徒", romaji: "seito", meaning: "murid" },
+    { japanese: "セーター", romaji: "seetaa", meaning: "switer" },
+    { japanese: "石鹸", romaji: "sekkin", meaning: "sabun" },
+    { japanese: "ゼロ", romaji: "zero", meaning: "nol" },
+    { japanese: "千", romaji: "sen/chi", meaning: "seribu" },
+    { japanese: "先月", romaji: "sengetsu", meaning: "bulan lalu" },
+    { japanese: "先週", romaji: "senshuu", meaning: "minggu lalu" },
+    { japanese: "先生", romaji: "sensei", meaning: "guru" },
+    { japanese: "先輩", romaji: "senpai", meaning: "senior" },
+    { japanese: "後輩", romaji: "kouhai", meaning: "junior" },
+    { japanese: "選択", romaji: "sentaku", meaning: "pilihan" },
+    { japanese: "生活", romaji: "seikatsu", meaning: "kehidupan" },
+    { japanese: "生産", romaji: "seisan", meaning: "produksi" },
+    { japanese: "世界", romaji: "sekai", meaning: "dunia" },
+    { japanese: "席", romaji: "seki", meaning: "tempat duduk" },
+    { japanese: "説明", romaji: "setsumei", meaning: "penjelasan" },
+    { japanese: "背中", romaji: "senaka", meaning: "punggung" },
+    { japanese: "線", romaji: "sen", meaning: "jalur" },
+    { japanese: "戦争", romaji: "sensou", meaning: "peperangan" },
+    { japanese: "政治", romaji: "seiji", meaning: "politik" },
+    { japanese: "西洋", romaji: "seiyou", meaning: "negara barat" },
+    { japanese: "全部", romaji: "zenbu", meaning: "semuanya" },
+    { japanese: "掃除", romaji: "souji", meaning: "bersih-bersih" },
+    { japanese: "相談", romaji: "soudan", meaning: "diskusi" },
+    { japanese: "卒業", romaji: "sotsugyou", meaning: "kelulusan" },
+    { japanese: "側", romaji: "soba", meaning: "disisi" },
+    { japanese: "空", romaji: "sora", meaning: "langit" },
+    { japanese: "大学", romaji: "daigaku", meaning: "universitas" },
+    { japanese: "大学生", romaji: "daigakusei", meaning: "mahasiswa" },
+    { japanese: "大使館", romaji: "taishikan", meaning: "kedutaan" },
+    { japanese: "棚", romaji: "tana", meaning: "lemari" },
+    { japanese: "台所", romaji: "daidokoro", meaning: "dapur" },
+    { japanese: "暖房", romaji: "danbou", meaning: "pemanasan" },
+    { japanese: "タクシー", romaji: "takushii", meaning: "taksi" },
+    { japanese: "たくさん", romaji: "takusan", meaning: "banyak" },
+    { japanese: "建物", romaji: "tatemono", meaning: "bangunan" },
+    { japanese: "食べ物", romaji: "tabemono", meaning: "makanan" },
+    { japanese: "卵", romaji: "tamago", meaning: "telur" },
+    { japanese: "誰", romaji: "dare", meaning: "siapa" },
+    { japanese: "誰か", romaji: "dareka", meaning: "seseorang" },
+    { japanese: "誰も", romaji: "daremo", meaning: "siapapun" },
+    { japanese: "誕生日", romaji: "tanjoubi", meaning: "hari ulang tahun" },
+    { japanese: "地下鉄", romaji: "chikatetsu", meaning: "kereta bawah tanah" },
+    { japanese: "地図", romaji: "chizu", meaning: "peta" },
+    { japanese: "机", romaji: "tsukue", meaning: "meja" },
+    { japanese: "手", romaji: "te", meaning: "tangan" },
+    { japanese: "テープ", romaji: "teepu", meaning: "tape" },
+    { japanese: "手紙", romaji: "tegami", meaning: "surat" },
+    { japanese: "出口", romaji: "deguchi", meaning: "pintu keluar" },
+    { japanese: "テスト", romaji: "tesuto", meaning: "tes" },
+    { japanese: "デパート", romaji: "depaato", meaning: "departement" },
+    { japanese: "テレビ", romaji: "terebi", meaning: "televisi" },
+    { japanese: "天気", romaji: "tenki", meaning: "cuaca" },
+    { japanese: "電車", romaji: "densha", meaning: "kereta" },
+    { japanese: "電話", romaji: "denwa", meaning: "telepon" },
+    { japanese: "ドア", romaji: "doa", meaning: "pintu" },
+    { japanese: "動物", romaji: "doubutsu", meaning: "hewan/binatang" },
+    { japanese: "時計", romaji: "tokei", meaning: "jam tangan" },
+    { japanese: "所", romaji: "tokoro", meaning: "tempat" },
+    { japanese: "図書館", romaji: "toshokan", meaning: "perpustakaan" },
+    { japanese: "土曜日", romaji: "doyoubi", meaning: "hari sabtu" },
+    { japanese: "鳥", romaji: "tori", meaning: "burung" },
+    { japanese: "月", romaji: "tsuki", meaning: "bulan" },
+    { japanese: "都合", romaji: "tsugou", meaning: "\"keadaan, alasan\"" },
+    { japanese: "お寺", romaji: "otera", meaning: "vihara" },
+    { japanese: "手袋", romaji: "tebukuro", meaning: "sarung tangan" },
+    { japanese: "店員", romaji: "ten'in", meaning: "pegawai toko" },
+    { japanese: "天気予報", romaji: "tenkiyohou", meaning: "ramalan cuaca" },
+    { japanese: "展覧会", romaji: "tenrankai", meaning: "pameran" },
+    { japanese: "床屋", romaji: "tokoya", meaning: "tempat potong rambut" },
+    { japanese: "途中", romaji: "tochuu", meaning: "ditengah jalan" },
+    { japanese: "特急", romaji: "tokkyuu", meaning: "kereta express terbatas" },
+    { japanese: "電灯", romaji: "dentou", meaning: "lampu listrik" },
+    { japanese: "動物園", romaji: "doubutsuen", meaning: "kebun binatang" },
+    { japanese: "道具", romaji: "dougu", meaning: "\"alat, perkakas\"" },
+    { japanese: "泥棒", romaji: "dorobou", meaning: "pencuri" },
+    { japanese: "ナイフ", romaji: "naifu", meaning: "pisau" },
+    { japanese: "夏", romaji: "natsu", meaning: "musim panas" },
+    { japanese: "夏休み", romaji: "natsuyasumi", meaning: "libur musim panas" },
+    { japanese: "日記", romaji: "nikki", meaning: "diary" },
+    { japanese: "入院", romaji: "nyuuin", meaning: "masuk rumah sakit" },
+    { japanese: "退院", romaji: "taiin", meaning: "keluar rumah sakit" },
+    { japanese: "人形", romaji: "ningyou", meaning: "boneka" },
+    { japanese: "入学", romaji: "nyuugaku", meaning: "masuk sekolah" },
+    { japanese: "値段", romaji: "nedan", meaning: "harga" },
+    { japanese: "喉", romaji: "nodo", meaning: "tenggorokan" },
+    { japanese: "乗り物", romaji: "norimono", meaning: "kendaraan" },
+    { japanese: "葉", romaji: "ha", meaning: "daun" },
+    { japanese: "日", romaji: "hi", meaning: "\"hari, matahari\"" },
+    { japanese: "火", romaji: "hi", meaning: "api" },
+    { japanese: "光", romaji: "hikari", meaning: "cahaya" },
+    { japanese: "引き出し", romaji: "hikidashi", meaning: "laci" },
+    { japanese: "髭", romaji: "hige", meaning: "\"kumis, janggut\"" },
+    { japanese: "飛行場", romaji: "hikoujou", meaning: "airport" },
+    { japanese: "美術館", romaji: "bijutsukan", meaning: "musium seni" },
+    { japanese: "昼間", romaji: "hiruma", meaning: "waktu siang" },
+    { japanese: "復習", romaji: "fukushuu", meaning: "review" },
+    { japanese: "部長", romaji: "buchou", meaning: "kepala bagian" },
+    { japanese: "葡萄", romaji: "budou", meaning: "anggur" },
+    { japanese: "布団", romaji: "futon", meaning: "futon" },
+    { japanese: "船", romaji: "fune", meaning: "\"kapal, perahu\"" },
+    { japanese: "普通", romaji: "futsuu", meaning: "biasa" },
+    { japanese: "フレゼント", romaji: "furezento", meaning: "hadiah" },
+    { japanese: "文化", romaji: "bunka", meaning: "budaya" },
+    { japanese: "文学", romaji: "bungaku", meaning: "sastra" },
+    { japanese: "文法", romaji: "bunpou", meaning: "tata bahasa" },
+    { japanese: "返事", romaji: "henji", meaning: "balasan" },
+    { japanese: "貿易", romaji: "boueki", meaning: "perdagangan" },
+    { japanese: "放送", romaji: "housou", meaning: "menyiarkan" },
+    { japanese: "法律", romaji: "houritsu", meaning: "hukum" },
+    { japanese: "星", romaji: "hoshi", meaning: "bintang" },
+    { japanese: "翻訳", romaji: "hon'yaku", meaning: "terjemah" },
+    { japanese: "僕", romaji: "boku", meaning: "aku(maskulin)" },
+    { japanese: "場合", romaji: "baiai", meaning: "situasi" },
+    { japanese: "歯医者", romaji: "haisha", meaning: "dokter gigi" },
+    { japanese: "発音", romaji: "hatsuon", meaning: "pengucapan" },
+    { japanese: "場所", romaji: "basho", meaning: "tempat" },
+    { japanese: "パソコン", romaji: "pasokon", meaning: "personal komputer" },
+    { japanese: "花見", romaji: "hanami", meaning: "melihat bunga mekar" },
+    { japanese: "林", romaji: "hayashi", meaning: "hutan" },
+    { japanese: "番組", romaji: "bangumi", meaning: "\"acara, program\"" },
+    { japanese: "反対", romaji: "hantai", meaning: "lawanan" },
+    { japanese: "冬", romaji: "fuyu", meaning: "musim dingin" },
+    { japanese: "冬休み", romaji: "fuyuyasumi", meaning: "libur musim dingin" },
+    { japanese: "名前", romaji: "namae", meaning: "nama" },
+    { japanese: "肉", romaji: "niku", meaning: "daging" },
+    { japanese: "西", romaji: "nishi", meaning: "barat" },
+    { japanese: "日曜日", romaji: "nichiyoubi", meaning: "hari minggu" },
+    { japanese: "荷物", romaji: "nimotsu", meaning: "barang bawaan" },
+    { japanese: "ニュース", romaji: "nyuusu", meaning: "berita" },
+    { japanese: "庭", romaji: "niwa", meaning: "halaman" },
+    { japanese: "ネクタイ", romaji: "nekutai", meaning: "dasi" },
+    { japanese: "ノート", romaji: "nooto", meaning: "catatan" },
+    { japanese: "飲み物", romaji: "nomimono", meaning: "minuman" },
+    { japanese: "歯", romaji: "ha", meaning: "gigi" },
+    { japanese: "パーティ", romaji: "paati", meaning: "pesta" },
+    { japanese: "灰皿", romaji: "haizara", meaning: "asbak" },
+    { japanese: "葉書", romaji: "hagaki", meaning: "kartu pos" },
+    { japanese: "箱", romaji: "hako", meaning: "kotak" },
+    { japanese: "初めて", romaji: "hajimete", meaning: "pertama kali" },
+    { japanese: "バス", romaji: "basu", meaning: "bis" },
+    { japanese: "バッター", romaji: "battaa", meaning: "mentega" },
+    { japanese: "二十歳", romaji: "hatachi", meaning: "dua puluh tahun" },
+    { japanese: "花", romaji: "hana", meaning: "bunga" },
+    { japanese: "鼻", romaji: "hana", meaning: "hidung" },
+    { japanese: "話", romaji: "hanashi", meaning: "berbicara" },
+    { japanese: "パン", romaji: "pan", meaning: "roti" },
+    { japanese: "ハンカチ", romaji: "hankachi", meaning: "sapu tangan" },
+    { japanese: "番号", romaji: "bangou", meaning: "nomor" },
+    { japanese: "晩ご飯", romaji: "bangohan", meaning: "makan malam" },
+    { japanese: "半分", romaji: "hanbun", meaning: "setengah" },
+    { japanese: "東", romaji: "higashi", meaning: "timur" },
+    { japanese: "飛行機", romaji: "hikouki", meaning: "pesawat" },
+    { japanese: "左", romaji: "hidari", meaning: "kiri" },
+    { japanese: "人", romaji: "hito", meaning: "orang" },
+    { japanese: "一つ", romaji: "hitotsu", meaning: "sebuah" },
+    { japanese: "一人", romaji: "hitori", meaning: "sendiri" },
+    { japanese: "百", romaji: "hyaku", meaning: "seratus" },
+    { japanese: "血", romaji: "chi", meaning: "darah" },
+    { japanese: "地理", romaji: "chiri", meaning: "geografi" },
+    { japanese: "力", romaji: "chikara", meaning: "tenaga" },
+    { japanese: "注意", romaji: "chuui", meaning: "\"perhatian, peringatan\"" },
+    { japanese: "中学校", romaji: "chuugakkou", meaning: "SMP" },
+    { japanese: "中学生", romaji: "chuugakusei", meaning: "murid SMP" },
+    { japanese: "注射", romaji: "chuusha", meaning: "suntikan" },
+    { japanese: "駐車場", romaji: "chuushajou", meaning: "tempat parkir" },
+    { japanese: "病院", romaji: "byouin", meaning: "rumah sakit" },
+    { japanese: "昼ご飯", romaji: "hirugohan", meaning: "makan siang" },
+    { japanese: "フィルム", romaji: "firumu", meaning: "film" },
+    { japanese: "フォーク", romaji: "fooku", meaning: "garpu" },
+    { japanese: "服", romaji: "fuku", meaning: "pakaian" },
+    { japanese: "二つ", romaji: "futatsu", meaning: "dua buah" },
+    { japanese: "二人", romaji: "futari", meaning: "berdua" },
+    { japanese: "豚肉", romaji: "butaniku", meaning: "daging babi" },
+    { japanese: "お風呂", romaji: "ofuro", meaning: "kamar mandi" },
+    { japanese: "ベッド", romaji: "beddo", meaning: "ranjang" },
+    { japanese: "部屋", romaji: "heya", meaning: "kamar" },
+    { japanese: "ペン", romaji: "pen", meaning: "pen" },
+    { japanese: "勉強", romaji: "benkyou", meaning: "belajar" },
+    { japanese: "帽子", romaji: "boushi", meaning: "topi" },
+    { japanese: "ボールペン", romaji: "boorupen", meaning: "bolpoin" },
+    { japanese: "他", romaji: "hoka", meaning: "yang lain" },
+    { japanese: "ポケット", romaji: "poketto", meaning: "saku" },
+    { japanese: "ボタン", romaji: "botan", meaning: "tombol" },
+    { japanese: "ホテル", romaji: "hoteru", meaning: "hotel" },
+    { japanese: "本", romaji: "hon", meaning: "buku" },
+    { japanese: "本棚", romaji: "hondana", meaning: "rak buku" },
+    { japanese: "毎朝", romaji: "maiasa", meaning: "setiap pagi" },
+    { japanese: "毎月", romaji: "maitsuki", meaning: "setiap bulan" },
+    { japanese: "毎日", romaji: "mainichi", meaning: "setiap hari" },
+    { japanese: "毎週", romaji: "maishuu", meaning: "setiap minggu" },
+    { japanese: "毎年", romaji: "maitoshi", meaning: "setiap tahun" },
+    { japanese: "毎晩", romaji: "maiban", meaning: "setiap malam" },
+    { japanese: "前", romaji: "mae", meaning: "depan/sebelum" },
+    { japanese: "また", romaji: "mata", meaning: "lagi" },
+    { japanese: "まだ", romaji: "mada", meaning: "masih" },
+    { japanese: "町", romaji: "machi", meaning: "kota" },
+    { japanese: "窓", romaji: "mado", meaning: "jendela" },
+    { japanese: "万", romaji: "man", meaning: "sepuluh ribu" },
+    { japanese: "水", romaji: "mizu", meaning: "air" },
+    { japanese: "店", romaji: "mise", meaning: "toko" },
+    { japanese: "道", romaji: "michi", meaning: "jalan" },
+    { japanese: "南", romaji: "minami", meaning: "selatan" },
+    { japanese: "耳", romaji: "mimi", meaning: "telinga" },
+    { japanese: "皆", romaji: "mina", meaning: "semua" },
+    { japanese: "漫画", romaji: "manga", meaning: "komik" },
+    { japanese: "湖", romaji: "mizuumi", meaning: "danau" },
+    { japanese: "味噌", romaji: "miso", meaning: "miso" },
+    { japanese: "港", romaji: "minato", meaning: "pelabuhan" },
+    { japanese: "虫", romaji: "mushi", meaning: "serangga" },
+    { japanese: "息子", romaji: "musuko", meaning: "anak laki-laki" },
+    { japanese: "娘", romaji: "musume", meaning: "anak perempuan" },
+    { japanese: "木綿", romaji: "momen", meaning: "kapas" },
+    { japanese: "森", romaji: "mori", meaning: "hutan lebat" },
+    { japanese: "約束", romaji: "yakusoku", meaning: "janji" },
+    { japanese: "お湯", romaji: "oyu", meaning: "air panas" },
+    { japanese: "輸出", romaji: "yushutsu", meaning: "ekspor" },
+    { japanese: "輸入", romaji: "yunyuu", meaning: "impor" },
+    { japanese: "指", romaji: "yubi", meaning: "jari" },
+    { japanese: "指輪", romaji: "yubiwa", meaning: "cincin" },
+    { japanese: "夢", romaji: "yume", meaning: "mimpi" },
+    { japanese: "予定", romaji: "yotei", meaning: "jadwal" },
+    { japanese: "予約", romaji: "yoyaku", meaning: "reservasi" },
+    { japanese: "理由", romaji: "riyuu", meaning: "alasan" },
+    { japanese: "両方", romaji: "ryouhou", meaning: "kedua belah" },
+    { japanese: "利用", romaji: "riyou", meaning: "menggunakan" },
+    { japanese: "旅館", romaji: "ryokan", meaning: "penginapan" },
+    { japanese: "冷房", romaji: "reibou", meaning: "pendingin" },
+    { japanese: "歴史", romaji: "rekishi", meaning: "sejarah" },
+    { japanese: "連絡", romaji: "renraku", meaning: "kontak" },
+    { japanese: "レジ", romaji: "reji", meaning: "registrasi" },
+    { japanese: "忘れ物", romaji: "wasuremono", meaning: "sesuatu yang terlupakan" },
+    { japanese: "訳", romaji: "wake", meaning: "\"alasan, maksud\"" },
+    { japanese: "割合", romaji: "wariai", meaning: "rasio" },
+    { japanese: "目", romaji: "me", meaning: "mata" },
+    { japanese: "眼鏡", romaji: "megane", meaning: "kacamata" },
+    { japanese: "もう", romaji: "mou", meaning: "sudah" },
+    { japanese: "木曜日", romaji: "mokuyoubi", meaning: "hari kamis" },
+    { japanese: "もしもし", romaji: "moshimoshi", meaning: "halo(ditelpon)" },
+    { japanese: "もちろん", romaji: "mochiron", meaning: "tentu" },
+    { japanese: "もっと", romaji: "motto", meaning: "lebih" },
+    { japanese: "物", romaji: "mono", meaning: "barang/sesuatu" },
+    { japanese: "門", romaji: "mon", meaning: "gerbang" },
+    { japanese: "問題", romaji: "mondai", meaning: "masalah" },
+    { japanese: "八百屋", romaji: "yaoya", meaning: "toko sayuran" },
+    { japanese: "休み", romaji: "yasumi", meaning: "libur" },
+    { japanese: "山", romaji: "yama", meaning: "gunung" },
+    { japanese: "洋服", romaji: "youfuku", meaning: "pakaian barat" },
+    { japanese: "来月", romaji: "raigetsu", meaning: "bulan depan" },
+    { japanese: "来週", romaji: "raishuu", meaning: "minggu depan" },
+    { japanese: "来年", romaji: "rainen", meaning: "tahun depan" },
+    { japanese: "ラジオ", romaji: "rajio", meaning: "radio" },
+    { japanese: "留学生", romaji: "ryuugakusei", meaning: "pelajar asing" },
+    { japanese: "両親", romaji: "ryoushin", meaning: "orang tua" },
+    { japanese: "料理", romaji: "ryouri", meaning: "masakan" },
+    { japanese: "旅行", romaji: "ryokou", meaning: "tamasya" },
+    { japanese: "冷蔵庫", romaji: "reizouko", meaning: "kulkas" },
+    { japanese: "レストラン", romaji: "resutoran", meaning: "restoran" },
+    { japanese: "練習", romaji: "renshuu", meaning: "berlatih" },
+    { japanese: "六", romaji: "roku", meaning: "enam" },
+    { japanese: "私", romaji: "watashi", meaning: "saya" }
+],
+            "adjective-i": [
+    { japanese: "青い", romaji: "aoi", meaning: "biru" },
+    { japanese: "赤い", romaji: "akai", meaning: "merah" },
+    { japanese: "明るい", romaji: "akarui", meaning: "terang" },
+    { japanese: "温かい", romaji: "atatakai", meaning: "hangat" },
+    { japanese: "新しい", romaji: "atarashii", meaning: "baru" },
+    { japanese: "暑い", romaji: "atsui", meaning: "panas" },
+    { japanese: "厚い", romaji: "atsui", meaning: "tebal" },
+    { japanese: "危ない", romaji: "abunai", meaning: "bahaya" },
+    { japanese: "甘い", romaji: "amai", meaning: "manis" },
+    { japanese: "良い", romaji: "yoi/ii", meaning: "bagus" },
+    { japanese: "忙しい", romaji: "isogashii", meaning: "sibuk" },
+    { japanese: "痛い", romaji: "itai", meaning: "sakit" },
+    { japanese: "薄い", romaji: "usui", meaning: "tipis" },
+    { japanese: "美味しい", romaji: "oishii", meaning: "enak" },
+    { japanese: "大きい", romaji: "ookii", meaning: "besar" },
+    { japanese: "遅い", romaji: "osoi", meaning: "lambat" },
+    { japanese: "重い", romaji: "omoi", meaning: "berat" },
+    { japanese: "面白い", romaji: "omoshiroi", meaning: "menarik" },
+    { japanese: "辛い", romaji: "karai", meaning: "pedas" },
+    { japanese: "軽い", romaji: "karui", meaning: "ringan" },
+    { japanese: "可愛い", romaji: "kawaii", meaning: "lucu" },
+    { japanese: "厳しい", romaji: "kibishii", meaning: "kasar" },
+    { japanese: "黄色い", romaji: "kiiroi", meaning: "kuning" },
+    { japanese: "汚い", romaji: "kitanai", meaning: "kotor" },
+    { japanese: "暗い", romaji: "kurai", meaning: "gelap" },
+    { japanese: "黒い", romaji: "kuroi", meaning: "hitam" },
+    { japanese: "細かい", romaji: "komakai", meaning: "tipis" },
+    { japanese: "怖い", romaji: "kowai", meaning: "takut" },
+    { japanese: "寂しい", romaji: "sabishii", meaning: "kesepian" },
+    { japanese: "寒い", romaji: "samui", meaning: "dingin" },
+    { japanese: "白い", romaji: "shiroi", meaning: "putih" },
+    { japanese: "涼しい", romaji: "suzushii", meaning: "sejuk" },
+    { japanese: "凄い", romaji: "sugoi", meaning: "hebat" },
+    { japanese: "素晴らしい", romaji: "subarashii", meaning: "mengagumkan" },
+    { japanese: "狭い", romaji: "semai", meaning: "sempit" },
+    { japanese: "正しい", romaji: "tadashii", meaning: "benar" },
+    { japanese: "高い", romaji: "takai", meaning: "tinggi/mahal" },
+    { japanese: "楽しい", romaji: "tanoshii", meaning: "menyenangkan" },
+    { japanese: "小さい", romaji: "chiisai", meaning: "kecil" },
+    { japanese: "近い", romaji: "chikai", meaning: "dekat" },
+    { japanese: "詰まらない", romaji: "tsumaranai", meaning: "membosankan" },
+    { japanese: "冷たい", romaji: "tsumetai", meaning: "dingin" },
+    { japanese: "強い", romaji: "tsuyoi", meaning: "kuat" },
+    { japanese: "遠い", romaji: "tooi", meaning: "jauh" },
+    { japanese: "長い", romaji: "nagai", meaning: "panjang" },
+    { japanese: "苦い", romaji: "nigai", meaning: "pahit" },
+    { japanese: "眠い", romaji: "nemui", meaning: "mengantuk" },
+    { japanese: "早い", romaji: "hayai", meaning: "cepat (dilakukannya)" },
+    { japanese: "速い", romaji: "hayai", meaning: "cepat (berlangsungnya)" },
+    { japanese: "恥ずかしい", romaji: "hazukashii", meaning: "malu" },
+    { japanese: "酷い", romaji: "hidoi", meaning: "buruk" },
+    { japanese: "低い", romaji: "hikui", meaning: "rendah" },
+    { japanese: "広い", romaji: "hiroi", meaning: "luas" },
+    { japanese: "深い", romaji: "fukai", meaning: "dalam" },
+    { japanese: "太い", romaji: "futoi", meaning: "gemuk" },
+    { japanese: "古い", romaji: "furui", meaning: "kuno" },
+    { japanese: "欲しい", romaji: "hoshii", meaning: "ingin" },
+    { japanese: "細い", romaji: "hosoi", meaning: "halus" },
+    { japanese: "不味い", romaji: "mazui", meaning: "tidak enak" },
+    { japanese: "丸い", romaji: "marui", meaning: "bulat" },
+    { japanese: "珍しい", romaji: "mezurashii", meaning: "\"jarang, langka\"" },
+    { japanese: "短い", romaji: "mijikai", meaning: "pendek" },
+    { japanese: "難しい", romaji: "muzukashii", meaning: "sulit" },
+    { japanese: "優しい", romaji: "yasashii", meaning: "lemah lembut" },
+    { japanese: "安い", romaji: "yasui", meaning: "murah" },
+    { japanese: "柔らかい", romaji: "yawarakai", meaning: "lembut" },
+    { japanese: "宜しい", romaji: "yoroshii", meaning: "\"ok, baik\"" },
+    { japanese: "若い", romaji: "wakai", meaning: "muda" }
+],
+            "adjective-na": [
+    { japanese: "好き", romaji: "suki", meaning: "suka" },
+    { japanese: "結構", romaji: "kekkou", meaning: "luar biasa" },
+    { japanese: "有名", romaji: "yuumei", meaning: "terkenal" },
+    { japanese: "きれい", romaji: "kirei", meaning: "indah/bersih" },
+    { japanese: "簡単", romaji: "kantan", meaning: "\"mudah, simple\"" },
+    { japanese: "大切", romaji: "taisetsu", meaning: "berharga" },
+    { japanese: "丁寧", romaji: "teinei", meaning: "sopan" },
+    { japanese: "嫌い", romaji: "kirai", meaning: "benci" },
+    { japanese: "静か", romaji: "shizuka", meaning: "hening" },
+    { japanese: "暇", romaji: "hima", meaning: "senggang" },
+    { japanese: "賑やか", romaji: "nigiyaka", meaning: "ramai" },
+    { japanese: "便利", romaji: "benri", meaning: "praktis" },
+    { japanese: "元気", romaji: "genki", meaning: "sehat" },
+    { japanese: "色々", romaji: "iroiro", meaning: "macam-macam" },
+    { japanese: "大丈夫", romaji: "daijoubu", meaning: "baik-baik saja" },
+    { japanese: "丈夫", romaji: "joubu", meaning: "kuat" },
+    { japanese: "大変", romaji: "taihen", meaning: "gawat" },
+    { japanese: "楽", romaji: "raku", meaning: "nyaman" },
+    { japanese: "いや", romaji: "iya", meaning: "tidak mengenakan" },
+    { japanese: "無理", romaji: "muri", meaning: "mustahil" },
+    { japanese: "上手", romaji: "jouzu", meaning: "mahir" },
+    { japanese: "下手", romaji: "heta", meaning: "payah" },
+    { japanese: "一生懸命", romaji: "isshoukenmei", meaning: "sungguh-sungguh" },
+    { japanese: "危険", romaji: "kiken", meaning: "berbahaya" },
+    { japanese: "残念", romaji: "zannen", meaning: "mengecewakan" },
+    { japanese: "心配", romaji: "shinpai", meaning: "khawatir" },
+    { japanese: "自由", romaji: "jiyuu", meaning: "bebas" },
+    { japanese: "十分", romaji: "juubun", meaning: "cukup" },
+    { japanese: "大好き", romaji: "daisuki", meaning: "sangat suka" },
+    { japanese: "大嫌い", romaji: "daikirai", meaning: "sangat benci" },
+    { japanese: "適当", romaji: "tekitou", meaning: "cocok" },
+    { japanese: "特別", romaji: "tokubetsu", meaning: "spesial" },
+    { japanese: "熱心", romaji: "nesshin", meaning: "antusias" },
+    { japanese: "不便", romaji: "fuben", meaning: "ribet" },
+    { japanese: "必要", romaji: "hitsuyou", meaning: "perlu" },
+    { japanese: "真面目", romaji: "majime", meaning: "serius" },
+    { japanese: "真っ直ぐ", romaji: "massugu", meaning: "lurus" },
+    { japanese: "立派", romaji: "rippa", meaning: "megah" }
+],
+            verb: [
+    { japanese: "会う", romaji: "au", meaning: "bertemu" },
+    { japanese: "合う", romaji: "au", meaning: "\"cocok, pas\"" },
+    { japanese: "開く", romaji: "aku", meaning: "terbuka" },
+    { japanese: "空く", romaji: "aku", meaning: "kosong" },
+    { japanese: "開ける", romaji: "akeru", meaning: "membuka" },
+    { japanese: "上がる", romaji: "agaru", meaning: "naik" },
+    { japanese: "上げる", romaji: "ageru", meaning: "memberi" },
+    { japanese: "遊ぶ", romaji: "asobu", meaning: "bermain" },
+    { japanese: "浴びる", romaji: "abiru", meaning: "mandi" },
+    { japanese: "洗う", romaji: "arau", meaning: "mencuci" },
+    { japanese: "ある", romaji: "aru", meaning: "\"ada, memiliki\"" },
+    { japanese: "歩く", romaji: "aruku", meaning: "berjalan" },
+    { japanese: "言う", romaji: "iu", meaning: "berkata" },
+    { japanese: "行く", romaji: "iku", meaning: "pergi" },
+    { japanese: "いる", romaji: "iru", meaning: "ada" },
+    { japanese: "要る", romaji: "iru", meaning: "membutuhkan" },
+    { japanese: "入れる", romaji: "ireru", meaning: "memasukkan" },
+    { japanese: "歌う", romaji: "utau", meaning: "bernyanyi" },
+    { japanese: "生まれる", romaji: "umareru", meaning: "lahir" },
+    { japanese: "売る", romaji: "uru", meaning: "menjual" },
+    { japanese: "起きる", romaji: "okiru", meaning: "bangun/terjadi" },
+    { japanese: "置く", romaji: "oku", meaning: "meletakkan" },
+    { japanese: "送る", romaji: "okuru", meaning: "mengirim" },
+    { japanese: "押す", romaji: "osu", meaning: "menekan" },
+    { japanese: "覚える", romaji: "oboeru", meaning: "mengingat" },
+    { japanese: "泳ぐ", romaji: "oyogu", meaning: "berenang" },
+    { japanese: "降りる", romaji: "oriru", meaning: "turun" },
+    { japanese: "終わる", romaji: "owaru", meaning: "berakhir" },
+    { japanese: "買う", romaji: "kau", meaning: "membeli" },
+    { japanese: "返す", romaji: "kaesu", meaning: "mengembalikan" },
+    { japanese: "帰る", romaji: "kaeru", meaning: "kembali" },
+    { japanese: "かかる", romaji: "kakaru", meaning: "membutuhkan (waktu/biaya)" },
+    { japanese: "書く", romaji: "kaku", meaning: "menulis" },
+    { japanese: "かける", romaji: "kakeru", meaning: "menggantung" },
+    { japanese: "電話をかける", romaji: "denwa o kakeru", meaning: "menelepon" },
+    { japanese: "貸す", romaji: "kasu", meaning: "meminjamkan" },
+    { japanese: "被る", romaji: "kaburu", meaning: "memakai (ke kepala)" },
+    { japanese: "借りる", romaji: "kariru", meaning: "meminjam" },
+    { japanese: "消える", romaji: "kieru", meaning: "menghilang" },
+    { japanese: "聞く", romaji: "kiku", meaning: "mendengar/bertanya" },
+    { japanese: "決まる", romaji: "kimaru", meaning: "diputuskan" },
+    { japanese: "決める", romaji: "kimeru", meaning: "memutuskan" },
+    { japanese: "切る", romaji: "kiru", meaning: "memotong" },
+    { japanese: "着る", romaji: "kiru", meaning: "mengenakan" },
+    { japanese: "比べる", romaji: "kuraberu", meaning: "membandingkan" },
+    { japanese: "くれる", romaji: "kureru", meaning: "memberi" },
+    { japanese: "暮れる", romaji: "kureru", meaning: "menjadi gelap" },
+    { japanese: "来る", romaji: "kuru", meaning: "datang" },
+    { japanese: "消す", romaji: "kesu", meaning: "menghapus" },
+    { japanese: "答える", romaji: "kotaeru", meaning: "menjawab" },
+    { japanese: "困る", romaji: "komaru", meaning: "bermasalah" },
+    { japanese: "込む", romaji: "komu", meaning: "\"melekuk, menjadi sesak\"" },
+    { japanese: "壊れる", romaji: "kowareru", meaning: "rusak" },
+    { japanese: "壊す", romaji: "kowasu", meaning: "merusak" },
+    { japanese: "下がる", romaji: "sagaru", meaning: "turun" },
+    { japanese: "下げる", romaji: "sageru", meaning: "menurunkan" },
+    { japanese: "咲く", romaji: "saku", meaning: "mekar" },
+    { japanese: "差す", romaji: "sasu", meaning: "menunjuk/membuka payung" },
+    { japanese: "差し上げる", romaji: "sashiageru", meaning: "memberi (hormat)" },
+    { japanese: "騒ぐ", romaji: "sawagu", meaning: "membuat kebisingan" },
+    { japanese: "触る", romaji: "sawaru", meaning: "menyentuh" },
+    { japanese: "叱る", romaji: "shikaru", meaning: "mengomeli" },
+    { japanese: "調べる", romaji: "shiraberu", meaning: "menginvestigasi" },
+    { japanese: "知らせる", romaji: "shiraseru", meaning: "memberitahu" },
+    { japanese: "死ぬ", romaji: "shinu", meaning: "mati" },
+    { japanese: "閉まる", romaji: "shimaru", meaning: "tertutup" },
+    { japanese: "閉める", romaji: "shimeru", meaning: "menutup" },
+    { japanese: "締める", romaji: "shimeru", meaning: "mengencangkan" },
+    { japanese: "知る", romaji: "shiru", meaning: "tahu" },
+    { japanese: "育てる", romaji: "sodateru", meaning: "\"membesarkan, mendidik\"" },
+    { japanese: "育つ", romaji: "sodatsu", meaning: "tumbuh besar" },
+    { japanese: "吸う", romaji: "suu", meaning: "mengisap" },
+    { japanese: "過ぎる", romaji: "sugiru", meaning: "melewati" },
+    { japanese: "住む", romaji: "sumu", meaning: "bertempat tinggal" },
+    { japanese: "済む", romaji: "sumu", meaning: "reda" },
+    { japanese: "進む", romaji: "susumu", meaning: "maju" },
+    { japanese: "捨てる", romaji: "suteru", meaning: "membuang" },
+    { japanese: "滑る", romaji: "suberu", meaning: "\"terselip, tergelincir\"" },
+    { japanese: "する", romaji: "suru", meaning: "melakukan" },
+    { japanese: "座る", romaji: "suwaru", meaning: "duduk" },
+    { japanese: "出す", romaji: "dasu", meaning: "mengeluarkan" },
+    { japanese: "立つ", romaji: "tatsu", meaning: "berdiri" },
+    { japanese: "足す", romaji: "tasu", meaning: "\"menambah, tambah (angka)\"" },
+    { japanese: "倒れる", romaji: "taoreru", meaning: "runtuh" },
+    { japanese: "頼む", romaji: "tanomu", meaning: "memohon" },
+    { japanese: "楽しむ", romaji: "tanoshimu", meaning: "menikmati" },
+    { japanese: "足りる", romaji: "tariru", meaning: "menjadi cukup" },
+    { japanese: "食べる", romaji: "taberu", meaning: "makan" },
+    { japanese: "訪ねる", romaji: "tazuneru", meaning: "mengunjungi" },
+    { japanese: "尋ねる", romaji: "tazuneru", meaning: "bertanya" },
+    { japanese: "建てる", romaji: "tateru", meaning: "membangun" },
+    { japanese: "立てる", romaji: "tateru", meaning: "mendirikan" },
+    { japanese: "違う", romaji: "chigau", meaning: "berbeda" },
+    { japanese: "使う", romaji: "tsukau", meaning: "menggunakan" },
+    { japanese: "疲れる", romaji: "tsukareru", meaning: "lelah" },
+    { japanese: "捕まる", romaji: "tsukamaru", meaning: "tertangkap" },
+    { japanese: "捕まえる", romaji: "tsukamaeru", meaning: "menangkap" },
+    { japanese: "着く", romaji: "tsuku", meaning: "tiba" },
+    { japanese: "作る", romaji: "tsukuru", meaning: "membuat" },
+    { japanese: "つける", romaji: "tsukeru", meaning: "menyalakan" },
+    { japanese: "漬ける", romaji: "tsukeru", meaning: "merendam" },
+    { japanese: "伝える", romaji: "tsutaeru", meaning: "menyampaikan" },
+    { japanese: "勤める", romaji: "tsutomeru", meaning: "bekerja untuk seseorang" },
+    { japanese: "釣る", romaji: "tsuru", meaning: "memancing" },
+    { japanese: "包む", romaji: "tsutsumu", meaning: "membungkus" },
+    { japanese: "連れる", romaji: "tsureru", meaning: "memimpin" },
+    { japanese: "続く", romaji: "tsuzuku", meaning: "berlanjut" },
+    { japanese: "続ける", romaji: "tsuzukeru", meaning: "melanjutkan" },
+    { japanese: "出来る", romaji: "dekiru", meaning: "bisa" },
+    { japanese: "出かける", romaji: "dekakeru", meaning: "pergi keluar" },
+    { japanese: "出る", romaji: "deru", meaning: "keluar" },
+    { japanese: "手伝う", romaji: "tetsudau", meaning: "membantu" },
+    { japanese: "飛ぶ", romaji: "tobu", meaning: "terbang" },
+    { japanese: "止まる", romaji: "tomaru", meaning: "berhenti" },
+    { japanese: "止める", romaji: "tomeru", meaning: "menghentikan" },
+    { japanese: "取る", romaji: "toru", meaning: "mengambil" },
+    { japanese: "撮る", romaji: "toru", meaning: "mengambil foto/memotret" },
+    { japanese: "通る", romaji: "tooru", meaning: "melalui" },
+    { japanese: "届く", romaji: "todoku", meaning: "tercapai" },
+    { japanese: "届ける", romaji: "todokeru", meaning: "mencapai" },
+    { japanese: "泊まる", romaji: "tomaru", meaning: "bermalam" },
+    { japanese: "取り替える", romaji: "torikaeru", meaning: "menukarkan" },
+    { japanese: "鳴く", romaji: "naku", meaning: "berbunyi" },
+    { japanese: "泣く", romaji: "naku", meaning: "menangis" },
+    { japanese: "亡くなる", romaji: "nakunaru", meaning: "meninggal" },
+    { japanese: "無くなる", romaji: "nakunaru", meaning: "hilang" },
+    { japanese: "並ぶ", romaji: "narabu", meaning: "berbaris" },
+    { japanese: "並べる", romaji: "naraberu", meaning: "menyusun" },
+    { japanese: "なる", romaji: "naru", meaning: "menjadi" },
+    { japanese: "治る", romaji: "naoru", meaning: "sembuh" },
+    { japanese: "直る", romaji: "naoru", meaning: "menjadi diperbaiki" },
+    { japanese: "治す", romaji: "naosu", meaning: "menyembuhkan" },
+    { japanese: "直す", romaji: "naosu", meaning: "memperbaiki" },
+    { japanese: "投げる", romaji: "nageru", meaning: "melempar" },
+    { japanese: "慣れる", romaji: "nareru", meaning: "terbiasa" },
+    { japanese: "逃げる", romaji: "nigeru", meaning: "melarikan diri" },
+    { japanese: "似る", romaji: "niru", meaning: "mirip" },
+    { japanese: "盗む", romaji: "nusumu", meaning: "mencuri" },
+    { japanese: "塗る", romaji: "nuru", meaning: "mencat" },
+    { japanese: "濡れる", romaji: "nureru", meaning: "menjadi basah" },
+    { japanese: "脱ぐ", romaji: "nugu", meaning: "menanggalkan" },
+    { japanese: "寝る", romaji: "neru", meaning: "tidur" },
+    { japanese: "登る", romaji: "noboru", meaning: "mendaki" },
+    { japanese: "飲む", romaji: "nomu", meaning: "minum" },
+    { japanese: "乗る", romaji: "noru", meaning: "naik (kendaraan)" },
+    { japanese: "残る", romaji: "nokoru", meaning: "menyisakan" },
+    { japanese: "入る", romaji: "hairu", meaning: "masuk" },
+    { japanese: "履く", romaji: "haku", meaning: "memakai (sepatu)" },
+    { japanese: "運ぶ", romaji: "hakobu", meaning: "mengangkut" },
+    { japanese: "始まる", romaji: "hajimaru", meaning: "mulai" },
+    { japanese: "走る", romaji: "hashiru", meaning: "berlari" },
+    { japanese: "働く", romaji: "hataraku", meaning: "bekerja" },
+    { japanese: "話す", romaji: "hanasu", meaning: "berbicara" },
+    { japanese: "張る", romaji: "haru", meaning: "menempelkan" },
+    { japanese: "払う", romaji: "harau", meaning: "membayar" },
+    { japanese: "晴れる", romaji: "hareru", meaning: "menjadi cerah" },
+    { japanese: "引く", romaji: "hiku", meaning: "menarik" },
+    { japanese: "弾く", romaji: "hiku", meaning: "memainkan (gitar)" },
+    { japanese: "冷える", romaji: "hieru", meaning: "menjadi dingin" },
+    { japanese: "光る", romaji: "hikaru", meaning: "bersinar" },
+    { japanese: "引き出す", romaji: "hikidasu", meaning: "menarik keluar" },
+    { japanese: "引く", romaji: "hiku", meaning: "memainkan (alat musik)" },
+    { japanese: "引っ越す", romaji: "hikkosu", meaning: "pindah rumah" },
+    { japanese: "開く", romaji: "hiraku", meaning: "\"membuka (acara, event)\"" },
+    { japanese: "拾う", romaji: "hirou", meaning: "memungut" },
+    { japanese: "吹く", romaji: "fuku", meaning: "meniup/bertiup" },
+    { japanese: "増える", romaji: "fueru", meaning: "bertambah" },
+    { japanese: "太る", romaji: "futoru", meaning: "bertambah gemuk" },
+    { japanese: "踏む", romaji: "fumu", meaning: "melangkah" },
+    { japanese: "降る", romaji: "furu", meaning: "turun" },
+    { japanese: "褒める", romaji: "homeru", meaning: "memuji" },
+    { japanese: "曲がる", romaji: "magaru", meaning: "berbelok/bengkok" },
+    { japanese: "負ける", romaji: "makeru", meaning: "kalah" },
+    { japanese: "間に合う", romaji: "maniau", meaning: "tepat waktu" },
+    { japanese: "待つ", romaji: "matsu", meaning: "menunggu" },
+    { japanese: "間違える", romaji: "machigaeru", meaning: "melakukan kesalahan" },
+    { japanese: "回る", romaji: "mawaru", meaning: "mengelilingi" },
+    { japanese: "磨く", romaji: "migaku", meaning: "menggosok" },
+    { japanese: "見つかる", romaji: "mitsukaru", meaning: "ditemukan" },
+    { japanese: "見つける", romaji: "mitsukeru", meaning: "menemukan" },
+    { japanese: "見せる", romaji: "miseru", meaning: "memperlihatkan" },
+    { japanese: "見る", romaji: "miru", meaning: "melihat" },
+    { japanese: "向かう", romaji: "mukau", meaning: "menghadapi" },
+    { japanese: "迎える", romaji: "mukaeru", meaning: "mendekati" },
+    { japanese: "持つ", romaji: "motsu", meaning: "membawa" },
+    { japanese: "召し上がる", romaji: "meshiagaru", meaning: "makan (hormat)" },
+    { japanese: "申し上げる", romaji: "moushiageru", meaning: "mengatakan (hormat)" },
+    { japanese: "申す", romaji: "mousu", meaning: "berkata (hormat)" },
+    { japanese: "戻る", romaji: "modoru", meaning: "kembali" },
+    { japanese: "貰う", romaji: "morau", meaning: "menerima" },
+    { japanese: "焼く", romaji: "yaku", meaning: "memanggang" },
+    { japanese: "役に立つ", romaji: "yakunitatsu", meaning: "berguna" },
+    { japanese: "休む", romaji: "yasumu", meaning: "beristirahat" },
+    { japanese: "痩せる", romaji: "yaseru", meaning: "menjadi kurus" },
+    { japanese: "やる", romaji: "yaru", meaning: "melakukan" },
+    { japanese: "辞める", romaji: "yameru", meaning: "berhenti" },
+    { japanese: "呼ぶ", romaji: "yobu", meaning: "memanggil" },
+    { japanese: "読む", romaji: "yomu", meaning: "membaca" },
+    { japanese: "喜ぶ", romaji: "yorokobu", meaning: "bersuka cita" },
+    { japanese: "沸かす", romaji: "wakasu", meaning: "mendidihkan" },
+    { japanese: "沸く", romaji: "waku", meaning: "mendidih" },
+    { japanese: "分かる", romaji: "wakaru", meaning: "mengerti" },
+    { japanese: "別れる", romaji: "wakareru", meaning: "berpisah" },
+    { japanese: "忘れる", romaji: "wasureru", meaning: "lupa" },
+    { japanese: "割る", romaji: "waru", meaning: "terbagi" },
+    { japanese: "割れる", romaji: "wareru", meaning: "membagi" },
+    { japanese: "渡す", romaji: "watasu", meaning: "menyerahkan" },
+    { japanese: "渡る", romaji: "wataru", meaning: "menyebrang" }
+]
+        };
+
+        // Global variables
+        let currentScreen = 'welcomeScreen';
+        let currentQuiz = [];
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let incorrectCount = 0;
+        let selectedCategory = '';
+        let customCategories = [];
+        let customCount = 10;
+
+        // Theme Functions
+        function setTheme(theme) {
+            if (theme === 'dark') {
+                document.body.classList.add('dark-theme');
+            } else {
+                document.body.classList.remove('dark-theme');
+            }
+            localStorage.setItem('theme', theme);
+        }
+
+        // Initialize theme
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            setTheme(savedTheme);
+        }
+
+        // Screen Navigation
+        function showScreen(screenName) {
+            // Hide all screens
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show requested screen
+            const targetScreen = document.getElementById(screenName);
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+                currentScreen = screenName;
+            }
+        }
+
+        // Exit Application
+        function exitApp() {
+            if (confirm('Apakah Anda yakin ingin keluar?')) {
+                window.close();
+            }
+        }
+
+        // Quiz Setup Functions
+        function setupQuiz(category) {
+            selectedCategory = category;
+            document.getElementById('setupCategoryTitle').textContent = `Kuis ${getCategoryName(category)}`;
+            
+            // Set max questions based on category
+            const maxQuestions = getCategoryCount(category);
+            document.getElementById('categoryQuestionCount').max = maxQuestions;
+            document.getElementById('categoryQuestionCount').value = Math.min(10, maxQuestions);
+            
+            // Set button action
+            document.getElementById('startCategoryQuizBtn').onclick = function() {
+                startCategoryQuiz(category);
+            };
+            
+            showScreen('quizSetupScreen');
+        }
+
+        function setupCustomQuiz() {
+            // Reset checkboxes
+            document.querySelectorAll('.category-checkbox input').forEach(checkbox => {
+                checkbox.checked = false;
+            });
+            
+            // Reset question count
+            document.getElementById('questionCount').value = 10;
+            
+            showScreen('customSetupScreen');
+        }
+
+        function selectAllQuestions() {
+            const maxQuestions = 1000; // Set a reasonable max
+            document.getElementById('questionCount').value = maxQuestions;
+        }
+
+        function selectAllCategoryQuestions() {
+            const maxQuestions = getCategoryCount(selectedCategory);
+            document.getElementById('categoryQuestionCount').value = maxQuestions;
+        }
+
+        function getCategoryName(category) {
+            const names = {
+                'noun': 'Kata Benda',
+                'adjective-i': 'Kata Sifat-I',
+                'adjective-na': 'Kata Sifat-na',
+                'verb': 'Kata Kerja',
+                'mixed': 'Campuran'
+            };
+            return names[category] || category;
+        }
+
+        function getCategoryCount(category) {
+            const counts = {
+                'noun': 567,
+                'adjective-i': 68,
+                'adjective-na': 38,
+                'verb': 208,
+                'mixed': 881
+            };
+            return counts[category] || 100;
+        }
+
+        // Quiz Functions
+        function startCategoryQuiz(category) {
+            const countInput = document.getElementById('categoryQuestionCount');
+            const questionCount = parseInt(countInput.value) || 10;
+            selectedCategory = category;
+            initializeQuiz(questionCount);
+            showScreen('quizScreen');
+            showQuestion();
+        }
+
+        function startCustomQuiz() {
+            // Get selected categories
+            customCategories = [];
+            document.querySelectorAll('.category-checkbox input:checked').forEach(checkbox => {
+                customCategories.push(checkbox.value);
+            });
+            
+            if (customCategories.length === 0) {
+                alert('Silakan pilih minimal satu kategori!');
+                return;
+            }
+            
+            const countInput = document.getElementById('questionCount');
+            const questionCount = parseInt(countInput.value) || 10;
+            selectedCategory = 'custom';
+            initializeQuiz(questionCount);
+            showScreen('quizScreen');
+            showQuestion();
+        }
+
+        function initializeQuiz(questionCount = null) {
+            // Reset quiz state
+            currentQuestionIndex = 0;
+            correctCount = 0;
+            incorrectCount = 0;
+            
+            // Update UI
+            updateStats();
+            
+            // Prepare quiz questions
+            let sourceData = [];
+            
+            if (selectedCategory === 'mixed') {
+                // Combine all categories for mixed quiz
+                sourceData = [
+                    ...vocabulary.noun,
+                    ...vocabulary['adjective-i'],
+                    ...vocabulary['adjective-na'],
+                    ...vocabulary.verb
+                ];
+            } else if (selectedCategory === 'custom') {
+                // Combine selected custom categories
+                customCategories.forEach(category => {
+                    if (vocabulary[category]) {
+                        sourceData = [...sourceData, ...vocabulary[category]];
+                    }
+                });
+            } else {
+                // Use specific category
+                sourceData = vocabulary[selectedCategory] || [];
+            }
+            
+            // Shuffle and select questions
+            const shuffled = [...sourceData].sort(() => 0.5 - Math.random());
+            const count = questionCount || sourceData.length;
+            currentQuiz = shuffled.slice(0, Math.min(count, sourceData.length));
+        }
+
+        function showQuestion() {
+            if (currentQuestionIndex >= currentQuiz.length) {
+                endQuiz();
+                return;
+            }
+            
+            const question = currentQuiz[currentQuestionIndex];
+            
+            // Update UI
+            document.getElementById('question').textContent = question.japanese;
+            document.getElementById('answer').textContent = '';
+            document.getElementById('currentQuestion').textContent = currentQuestionIndex + 1;
+            updateStats();
+            
+            // Generate options
+            generateOptions(question);
+            
+            // Hide next button
+            document.getElementById('nextBtn').style.display = 'none';
+        }
+
+        function generateOptions(correctAnswer) {
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            // Get potential wrong answers from the same category
+            let allWords = [];
+            if (selectedCategory === 'mixed') {
+                allWords = [
+                    ...vocabulary.noun,
+                    ...vocabulary['adjective-i'],
+                    ...vocabulary['adjective-na'],
+                    ...vocabulary.verb
+                ];
+            } else if (selectedCategory === 'custom') {
+                customCategories.forEach(category => {
+                    if (vocabulary[category]) {
+                        allWords = [...allWords, ...vocabulary[category]];
+                    }
+                });
+            } else {
+                allWords = vocabulary[selectedCategory] || [];
+            }
+            
+            // Filter out the correct answer
+            const wrongAnswers = allWords
+                .filter(word => word.romaji !== correctAnswer.romaji)
+                .sort(() => 0.5 - Math.random())
+                .slice(0, 3);
+            
+            // Combine correct and wrong answers
+            const options = [correctAnswer, ...wrongAnswers]
+                .sort(() => 0.5 - Math.random());
+            
+            // Create option buttons
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option.romaji;
+                button.onclick = () => checkAnswer(option, correctAnswer);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selected, correct) {
+            // Disable all option buttons
+            const buttons = document.querySelectorAll('.option-btn');
+            buttons.forEach(btn => {
+                btn.disabled = true;
+                
+                // Highlight correct and incorrect answers
+                if (btn.textContent === correct.romaji) {
+                    btn.classList.add('correct');
+                } else if (btn.textContent === selected.romaji && selected.romaji !== correct.romaji) {
+                    btn.classList.add('incorrect');
+                }
+            });
+            
+            // Show the meaning answer
+            document.getElementById('answer').textContent = `Arti: ${correct.meaning}`;
+            
+            // Update score
+            if (selected.romaji === correct.romaji) {
+                correctCount++;
+            } else {
+                incorrectCount++;
+            }
+            
+            updateStats();
+            
+            // Show next button
+            document.getElementById('nextBtn').style.display = 'inline-flex';
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+            showQuestion();
+        }
+
+        function updateStats() {
+            document.getElementById('correctCount').textContent = correctCount;
+            document.getElementById('incorrectCount').textContent = incorrectCount;
+            updateProgress();
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestionIndex) / currentQuiz.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+        }
+
+        function endQuiz() {
+            // Calculate statistics
+            const total = correctCount + incorrectCount;
+            const percentage = total > 0 ? Math.round((correctCount / total) * 100) : 0;
+            
+            // Update summary screen
+            document.getElementById('summaryCorrect').textContent = correctCount;
+            document.getElementById('summaryIncorrect').textContent = incorrectCount;
+            document.getElementById('summaryPercentage').textContent = `${percentage}%`;
+            
+            // Show summary screen
+            showScreen('summaryScreen');
+        }
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', () => {
+            initTheme();
+        });
+    </script>
+</body>
+</html>
